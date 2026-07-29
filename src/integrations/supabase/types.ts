@@ -14,7 +14,181 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      automations: {
+        Row: {
+          accent: string
+          category: string
+          created_at: string
+          creator: string
+          description: string
+          featured: boolean
+          icon: string
+          id: string
+          launches: number
+          name: string
+          rating: number
+          runtime: string
+          slug: string
+          success_rate: number
+          tagline: string
+          tier: string
+          token_cost: number
+          trending: boolean
+          version: string
+        }
+        Insert: {
+          accent?: string
+          category: string
+          created_at?: string
+          creator: string
+          description?: string
+          featured?: boolean
+          icon?: string
+          id?: string
+          launches?: number
+          name: string
+          rating?: number
+          runtime?: string
+          slug: string
+          success_rate?: number
+          tagline: string
+          tier?: string
+          token_cost?: number
+          trending?: boolean
+          version?: string
+        }
+        Update: {
+          accent?: string
+          category?: string
+          created_at?: string
+          creator?: string
+          description?: string
+          featured?: boolean
+          icon?: string
+          id?: string
+          launches?: number
+          name?: string
+          rating?: number
+          runtime?: string
+          slug?: string
+          success_rate?: number
+          tagline?: string
+          tier?: string
+          token_cost?: number
+          trending?: boolean
+          version?: string
+        }
+        Relationships: []
+      }
+      executions: {
+        Row: {
+          automation_id: string
+          config: Json
+          created_at: string
+          duration_ms: number
+          id: string
+          result: string | null
+          status: string
+          tokens_used: number
+          user_id: string
+        }
+        Insert: {
+          automation_id: string
+          config?: Json
+          created_at?: string
+          duration_ms?: number
+          id?: string
+          result?: string | null
+          status?: string
+          tokens_used?: number
+          user_id: string
+        }
+        Update: {
+          automation_id?: string
+          config?: Json
+          created_at?: string
+          duration_ms?: number
+          id?: string
+          result?: string | null
+          status?: string
+          tokens_used?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executions_automation_id_fkey"
+            columns: ["automation_id"]
+            isOneToOne: false
+            referencedRelation: "automations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          automation_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          automation_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          automation_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_automation_id_fkey"
+            columns: ["automation_id"]
+            isOneToOne: false
+            referencedRelation: "automations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          credits: number
+          full_name: string | null
+          id: string
+          plan: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          credits?: number
+          full_name?: string | null
+          id: string
+          plan?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          credits?: number
+          full_name?: string | null
+          id?: string
+          plan?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
