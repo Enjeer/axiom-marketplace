@@ -159,9 +159,19 @@ export type Database = {
           bio: string | null
           created_at: string
           credits: number
+          display_name: string | null
+          email: string | null
           full_name: string | null
           id: string
+          last_login_at: string | null
+          monthly_tokens_used: number
           plan: string
+          provider: string | null
+          role: string
+          status: string
+          subscription: string
+          tokens: number
+          total_tokens_used: number
           updated_at: string
           username: string | null
         }
@@ -170,9 +180,19 @@ export type Database = {
           bio?: string | null
           created_at?: string
           credits?: number
+          display_name?: string | null
+          email?: string | null
           full_name?: string | null
           id: string
+          last_login_at?: string | null
+          monthly_tokens_used?: number
           plan?: string
+          provider?: string | null
+          role?: string
+          status?: string
+          subscription?: string
+          tokens?: number
+          total_tokens_used?: number
           updated_at?: string
           username?: string | null
         }
@@ -181,9 +201,19 @@ export type Database = {
           bio?: string | null
           created_at?: string
           credits?: number
+          display_name?: string | null
+          email?: string | null
           full_name?: string | null
           id?: string
+          last_login_at?: string | null
+          monthly_tokens_used?: number
           plan?: string
+          provider?: string | null
+          role?: string
+          status?: string
+          subscription?: string
+          tokens?: number
+          total_tokens_used?: number
           updated_at?: string
           username?: string | null
         }
@@ -194,7 +224,127 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_tokens: {
+        Args: { _amount: number; _user_id: string }
+        Returns: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          credits: number
+          display_name: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          last_login_at: string | null
+          monthly_tokens_used: number
+          plan: string
+          provider: string | null
+          role: string
+          status: string
+          subscription: string
+          tokens: number
+          total_tokens_used: number
+          updated_at: string
+          username: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      increment_usage: {
+        Args: { _amount: number; _user_id: string }
+        Returns: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          credits: number
+          display_name: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          last_login_at: string | null
+          monthly_tokens_used: number
+          plan: string
+          provider: string | null
+          role: string
+          status: string
+          subscription: string
+          tokens: number
+          total_tokens_used: number
+          updated_at: string
+          username: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      remove_tokens: {
+        Args: { _amount: number; _user_id: string }
+        Returns: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          credits: number
+          display_name: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          last_login_at: string | null
+          monthly_tokens_used: number
+          plan: string
+          provider: string | null
+          role: string
+          status: string
+          subscription: string
+          tokens: number
+          total_tokens_used: number
+          updated_at: string
+          username: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      reset_monthly_usage: {
+        Args: { _user_id: string }
+        Returns: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          credits: number
+          display_name: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          last_login_at: string | null
+          monthly_tokens_used: number
+          plan: string
+          provider: string | null
+          role: string
+          status: string
+          subscription: string
+          tokens: number
+          total_tokens_used: number
+          updated_at: string
+          username: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      touch_last_login: { Args: { _user_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
