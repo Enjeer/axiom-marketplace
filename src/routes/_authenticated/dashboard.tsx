@@ -262,3 +262,22 @@ function MetricCard({
     </div>
   );
 }
+
+function Fact({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Zap;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div>
+      <p className="label-mono flex items-center gap-1.5">
+        <Icon className="size-3" /> {label}
+      </p>
+      <p className="mt-1 text-sm font-semibold capitalize">{value}</p>
+    </div>
+  );
+}
