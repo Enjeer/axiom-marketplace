@@ -1,10 +1,22 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Activity, ArrowRight, CheckCircle2, Play, Zap } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Activity,
+  ArrowRight,
+  CalendarClock,
+  CheckCircle2,
+  Clock,
+  CreditCard,
+  LogOut,
+  Play,
+  Zap,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { useProfile } from "@/hooks/use-profile";
 import { accentClass, formatCount, iconFor, type Automation } from "@/lib/catalog";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +39,18 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function DashboardPage() {
+  const { user, signOut } = useAuth();
+  const { profile } = useProfile();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await signOut();
+    navigate({ to: "/login", replace: true });
+  }
+
   const { data: automations } = useQuery({
     queryKey: ["automations"],
     queryFn: async () => {
@@ -60,23 +84,75 @@ function DashboardPage() {
             <p className="label-mono">Nexus AI › Project Alpha › Automations</p>
             <h1 className="mt-2 text-3xl font-extrabold">Overview</h1>
           </div>
-          <span className="flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-widest">
-            <span className="size-2 rounded-full bg-success" /> Live status: active
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-widest">
+              <span className="size-2 rounded-full bg-success" /> {profile?.status ?? "active"}
+            </span>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut /> Log out
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <section className="surface-card flex flex-wrap items-center gap-5 p-6">
+          {profile?.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt={`${profile.display_name ?? "User"} avatar`}
+              className="size-14 rounded-2xl object-cover"
+            />
+          ) : (
+            <span className="grid size-14 place-items-center rounded-2xl bg-ink font-display text-lg font-bold text-ink-foreground">
+              {(profile?.display_name ?? user?.email ?? "?").slice(0, 1).toUpperCase()}
+            </span>
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-display text-xl font-bold">
+              {profile?.display_name ?? profile?.full_name ?? "Your account"}
+            </p>
+            <p className="truncate text-sm text-muted-foreground">
+              {profile?.email ?? user?.email}
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+            <Fact icon={CreditCard} label="Plan" value={profile?.subscription ?? "free"} />
+            <Fact
+              icon={CalendarClock}
+              label="Member since"
+              value={
+                profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : "—"
+              }
+            />
+            <Fact
+              icon={Clock}
+              label="Last login"
+              value={
+                profile?.last_login_at
+                  ? new Date(profile.last_login_at).toLocaleString()
+                  : "First session"
+              }
+            />
+          </div>
+        </section>
+
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           <MetricCard
             icon={Zap}
-            label="Tokens used"
-            value={tokens.toLocaleString()}
-            hint={`${executions?.length ?? 0} runs recorded`}
+            label="Tokens remaining"
+            value={(profile?.tokens ?? 0).toLocaleString()}
+            hint={`Provider: ${profile?.provider ?? "email"}`}
           />
           <MetricCard
             icon={Activity}
-            label="Available automations"
-            value={String(automations?.length ?? 0)}
-            hint="Across 16 categories"
+            label="Used this month"
+            value={(profile?.monthly_tokens_used ?? 0).toLocaleString()}
+            hint="Resets at the start of each cycle"
+          />
+          <MetricCard
+            icon={Activity}
+            label="Used all time"
+            value={(profile?.total_tokens_used ?? 0).toLocaleString()}
+            hint={`${tokens.toLocaleString()} tokens across recent runs`}
           />
           <MetricCard
             icon={CheckCircle2}
@@ -183,6 +259,25 @@ function MetricCard({
       </div>
       <p className="mt-3 font-display text-3xl font-extrabold">{value}</p>
       <p className="mt-3 text-xs text-muted-foreground">{hint}</p>
+    </div>
+  );
+}
+
+function Fact({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Zap;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div>
+      <p className="label-mono flex items-center gap-1.5">
+        <Icon className="size-3" /> {label}
+      </p>
+      <p className="mt-1 text-sm font-semibold capitalize">{value}</p>
     </div>
   );
 }

@@ -61,7 +61,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       if (!auth.user) return null;
       const { data } = await supabase
         .from("profiles")
-        .select("full_name, username, credits, plan, avatar_url")
+        .select("full_name, display_name, username, tokens, subscription, avatar_url")
         .eq("id", auth.user.id)
         .maybeSingle();
       return { email: auth.user.email ?? "", ...data };
@@ -79,7 +79,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/", replace: true });
+    navigate({ to: "/login", replace: true });
   }
 
   return (
@@ -123,9 +123,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 
           <div className="flex items-center gap-2 justify-self-end">
             <div className="hidden items-center gap-1.5 rounded-full border border-border bg-surface-muted px-3 py-1.5 sm:flex">
-              <span className="label-mono">Credits</span>
+              <span className="label-mono">Tokens</span>
               <span className="font-mono text-xs font-semibold">
-                {(profile?.credits ?? 0).toLocaleString()}
+                {(profile?.tokens ?? 0).toLocaleString()}
               </span>
             </div>
             <Button variant="ghost" size="icon" aria-label="Notifications">
@@ -205,7 +205,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
           <div className="mt-auto space-y-4">
             <div className="rounded-2xl border border-primary/20 bg-accent p-4">
-              <p className="label-mono text-primary">Current plan: {profile?.plan ?? "free"}</p>
+              <p className="label-mono text-primary">Current plan: {profile?.subscription ?? "free"}</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 Unlock enterprise automations and higher token limits.
               </p>
