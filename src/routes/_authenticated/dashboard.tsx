@@ -84,23 +84,75 @@ function DashboardPage() {
             <p className="label-mono">Nexus AI › Project Alpha › Automations</p>
             <h1 className="mt-2 text-3xl font-extrabold">Overview</h1>
           </div>
-          <span className="flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-widest">
-            <span className="size-2 rounded-full bg-success" /> Live status: active
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 font-mono text-[0.6875rem] uppercase tracking-widest">
+              <span className="size-2 rounded-full bg-success" /> {profile?.status ?? "active"}
+            </span>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut /> Log out
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <section className="surface-card flex flex-wrap items-center gap-5 p-6">
+          {profile?.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt={`${profile.display_name ?? "User"} avatar`}
+              className="size-14 rounded-2xl object-cover"
+            />
+          ) : (
+            <span className="grid size-14 place-items-center rounded-2xl bg-ink font-display text-lg font-bold text-ink-foreground">
+              {(profile?.display_name ?? user?.email ?? "?").slice(0, 1).toUpperCase()}
+            </span>
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-display text-xl font-bold">
+              {profile?.display_name ?? profile?.full_name ?? "Your account"}
+            </p>
+            <p className="truncate text-sm text-muted-foreground">
+              {profile?.email ?? user?.email}
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+            <Fact icon={CreditCard} label="Plan" value={profile?.subscription ?? "free"} />
+            <Fact
+              icon={CalendarClock}
+              label="Member since"
+              value={
+                profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : "—"
+              }
+            />
+            <Fact
+              icon={Clock}
+              label="Last login"
+              value={
+                profile?.last_login_at
+                  ? new Date(profile.last_login_at).toLocaleString()
+                  : "First session"
+              }
+            />
+          </div>
+        </section>
+
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           <MetricCard
             icon={Zap}
-            label="Tokens used"
-            value={tokens.toLocaleString()}
-            hint={`${executions?.length ?? 0} runs recorded`}
+            label="Tokens remaining"
+            value={(profile?.tokens ?? 0).toLocaleString()}
+            hint={`Provider: ${profile?.provider ?? "email"}`}
           />
           <MetricCard
             icon={Activity}
-            label="Available automations"
-            value={String(automations?.length ?? 0)}
-            hint="Across 16 categories"
+            label="Used this month"
+            value={(profile?.monthly_tokens_used ?? 0).toLocaleString()}
+            hint="Resets at the start of each cycle"
+          />
+          <MetricCard
+            icon={Activity}
+            label="Used all time"
+            value={(profile?.total_tokens_used ?? 0).toLocaleString()}
+            hint={`${tokens.toLocaleString()} tokens across recent runs`}
           />
           <MetricCard
             icon={CheckCircle2}
