@@ -63,7 +63,7 @@ function SettingsPage() {
     if (!auth.user) return;
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: fullName, username, bio })
+      .update({ full_name: fullName, display_name: fullName, username, bio })
       .eq("id", auth.user.id);
     setSaving(false);
     if (error) toast.error(error.message);
@@ -134,20 +134,20 @@ function SettingsPage() {
               <section className="surface-card p-6">
                 <h2 className="label-mono">Token consumption</h2>
                 <p className="mt-4 font-display text-4xl font-extrabold">
-                  {(profile?.credits ?? 0).toLocaleString()}
+                  {(profile?.tokens ?? 0).toLocaleString()}
                 </p>
-                <p className="label-mono mt-1">credits remaining</p>
+                <p className="label-mono mt-1">tokens remaining</p>
                 <div className="mt-4 h-2 overflow-hidden rounded-full bg-secondary">
                   <div
                     className="h-full rounded-full bg-primary"
-                    style={{ width: `${Math.min(100, ((profile?.credits ?? 0) / 5000) * 100)}%` }}
+                    style={{ width: `${Math.min(100, ((profile?.tokens ?? 0) / 100000) * 100)}%` }}
                   />
                 </div>
               </section>
 
               <section className="surface-card p-6">
                 <h2 className="label-mono">Subscription</h2>
-                <p className="mt-3 text-lg font-semibold capitalize">{profile?.plan ?? "free"} plan</p>
+                <p className="mt-3 text-lg font-semibold capitalize">{profile?.subscription ?? "free"} plan</p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Paid plans and credit packs are coming soon.
                 </p>
