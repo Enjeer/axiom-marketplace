@@ -1,10 +1,22 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Activity, ArrowRight, CheckCircle2, Play, Zap } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Activity,
+  ArrowRight,
+  CalendarClock,
+  CheckCircle2,
+  Clock,
+  CreditCard,
+  LogOut,
+  Play,
+  Zap,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { useProfile } from "@/hooks/use-profile";
 import { accentClass, formatCount, iconFor, type Automation } from "@/lib/catalog";
 import { cn } from "@/lib/utils";
 
