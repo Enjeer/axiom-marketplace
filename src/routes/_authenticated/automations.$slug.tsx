@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { isWebhookTool, WebhookToolPanel } from "@/components/webhook-tool-panel";
 import { accentClass, formatCount, iconFor, type Automation } from "@/lib/catalog";
 import { cn } from "@/lib/utils";
 
