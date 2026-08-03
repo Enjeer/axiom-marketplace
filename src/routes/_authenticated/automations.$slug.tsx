@@ -146,6 +146,7 @@ function AutomationDetail() {
   }
 
   const Icon = iconFor(automation.icon);
+  const webhookTool = isWebhookTool(automation.slug);
 
   return (
     <AppShell>
