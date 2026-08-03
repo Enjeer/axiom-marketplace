@@ -184,15 +184,21 @@ function AutomationDetail() {
             <Button variant="outline" size="icon" aria-label="Share">
               <Share2 />
             </Button>
-            <Button
-              variant="ink"
-              onClick={() => run.mutate()}
-              disabled={run.isPending}
-              className="hidden sm:inline-flex"
-            >
-              {run.isPending ? <Loader2 className="animate-spin" /> : <Play className="fill-current" />}
-              Run automation
-            </Button>
+            {!webhookTool && (
+              <Button
+                variant="ink"
+                onClick={() => run.mutate()}
+                disabled={run.isPending}
+                className="hidden sm:inline-flex"
+              >
+                {run.isPending ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Play className="fill-current" />
+                )}
+                Run automation
+              </Button>
+            )}
           </div>
         </header>
 
