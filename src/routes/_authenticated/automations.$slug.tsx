@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { isWebhookTool, WebhookToolPanel } from "@/components/webhook-tool-panel";
 import { accentClass, formatCount, iconFor, type Automation } from "@/lib/catalog";
 import { cn } from "@/lib/utils";
 
@@ -145,6 +146,7 @@ function AutomationDetail() {
   }
 
   const Icon = iconFor(automation.icon);
+  const webhookTool = isWebhookTool(automation.slug);
 
   return (
     <AppShell>
@@ -182,15 +184,21 @@ function AutomationDetail() {
             <Button variant="outline" size="icon" aria-label="Share">
               <Share2 />
             </Button>
-            <Button
-              variant="ink"
-              onClick={() => run.mutate()}
-              disabled={run.isPending}
-              className="hidden sm:inline-flex"
-            >
-              {run.isPending ? <Loader2 className="animate-spin" /> : <Play className="fill-current" />}
-              Run automation
-            </Button>
+            {!webhookTool && (
+              <Button
+                variant="ink"
+                onClick={() => run.mutate()}
+                disabled={run.isPending}
+                className="hidden sm:inline-flex"
+              >
+                {run.isPending ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Play className="fill-current" />
+                )}
+                Run automation
+              </Button>
+            )}
           </div>
         </header>
 
@@ -208,6 +216,9 @@ function AutomationDetail() {
               </div>
             </section>
 
+            {webhookTool ? (
+              <WebhookToolPanel automation={automation} onResult={setResult} />
+            ) : (
             <section className="surface-card overflow-hidden">
               <div className="border-b border-border px-6 py-4">
                 <h2 className="label-mono">Bot configuration</h2>
@@ -333,6 +344,7 @@ function AutomationDetail() {
                 </div>
               </div>
             </section>
+            )}
 
             {result && (
               <section className="surface-card p-6">
