@@ -344,6 +344,7 @@ function AutomationDetail() {
                 </div>
               </div>
             </section>
+            )}
 
             {result && (
               <section className="surface-card p-6">
