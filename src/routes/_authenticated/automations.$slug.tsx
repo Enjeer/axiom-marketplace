@@ -216,6 +216,9 @@ function AutomationDetail() {
               </div>
             </section>
 
+            {webhookTool ? (
+              <WebhookToolPanel automation={automation} onResult={setResult} />
+            ) : (
             <section className="surface-card overflow-hidden">
               <div className="border-b border-border px-6 py-4">
                 <h2 className="label-mono">Bot configuration</h2>
