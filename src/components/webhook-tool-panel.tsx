@@ -51,7 +51,13 @@ export function WebhookToolPanel({
   const run = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Not signed in");
+      if (tokens < automation.token_cost) {
+        throw new Error(
+          `Not enough tokens. This run costs ${automation.token_cost}, you have ${tokens}.`,
+        );
+      }
       const started = Date.now();
+
 
       let payload: Parameters<typeof runWebhookTool>[0]["data"];
       if (isPdf) {
