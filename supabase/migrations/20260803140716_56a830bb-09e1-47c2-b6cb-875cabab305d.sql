@@ -1,0 +1,5 @@
+INSERT INTO public.automations (slug, name, tagline, description, category, creator, icon, accent, version, rating, launches, runtime, token_cost, success_rate, tier, featured, trending)
+VALUES
+ ('sales-lead-qualifier','Sales Lead Qualifier','Score any LinkedIn lead against your criteria','Paste a LinkedIn profile or company URL, describe what a qualified lead looks like for your team, and get back a structured qualification verdict with reasoning.','Lead Generation','Nexus Labs','users','emerald','v1.0.0',4.8,0,'< 20s',250,99.0,'free',false,true),
+ ('pdf-extractor','PDF Extractor','Turn any PDF into clean structured text','Upload a PDF and receive the extracted, cleaned-up content ready to pipe into downstream automations, summaries or datasets.','Documents','Nexus Labs','file-text','violet','v1.0.0',4.7,0,'< 30s',150,99.0,'free',false,false)
+ON CONFLICT (slug) DO NOTHING;
