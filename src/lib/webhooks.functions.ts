@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /** Whitelisted n8n webhooks. Keyed by automation slug so clients cannot pick a URL. */
 const WEBHOOKS: Record<string, string> = {
-  "sales-lead-qualifier": "https://n8n.aorm.online/webhook-test/sales-lead-qualifier",
+  "sales-lead-qualifier": "https://n8n.aorm.online/webhook/sales-lead-qualifier",
   "pdf-extractor": "https://n8n.aorm.online/webhook-test/extract-pdf",
 };
 
