@@ -39,7 +39,7 @@ export function WebhookToolPanel({
   onResult: (output: string) => void;
 }) {
   const { user } = useAuth();
-  const { incrementUsage } = useTokens();
+  const { tokens, incrementUsage } = useTokens();
   const queryClient = useQueryClient();
 
   const isPdf = automation.slug === "pdf-extractor";
