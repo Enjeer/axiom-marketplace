@@ -1,23 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-
-/**
- * Whitelisted n8n webhooks. Keyed by automation slug so clients cannot pick a URL.
- * URLs come from environment variables (read at call time, never at module scope).
- */
-function getWebhooks(): Record<string, string> {
-  const base = (process.env['N8N_BASE_URL'] ?? 'https://n8n.aorm.online').replace(/\/+$/, '');
-  return {
-    'sales-lead-qualifier':
-      process.env['N8N_WEBHOOK_SALES_LEAD_QUALIFIER'] ?? `${base}/webhook/sales-lead-qualifier`,
-    'pdf-extractor':
-      process.env['N8N_WEBHOOK_PDF_EXTRACTOR'] ?? `${base}/webhook-test/extract-pdf`,
-  };
-}
-
-const WEBHOOK_SLUGS = ['sales-lead-qualifier', 'pdf-extractor'];
-
-const WEBHOOK_TIMEOUT_MS = Number(process.env['N8N_WEBHOOK_TIMEOUT_MS'] ?? 120_000);
+import { WEBHOOK_SLUGS } from "@/lib/webhooks.config.server";
 
 type WebhookInput = {
   slug: string;
@@ -29,7 +12,7 @@ type WebhookInput = {
 };
 
 function validate(input: WebhookInput): WebhookInput {
-  if (!input || typeof input.slug !== "string" || !WEBHOOKS[input.slug]) {
+  if (!input || typeof input.slug !== "string" || !(WEBHOOK_SLUGS as readonly string[]).includes(input.slug)) {
     throw new Error("Unknown automation");
   }
   if (input.linkedinUrl && input.linkedinUrl.length > 500) throw new Error("URL too long");
@@ -43,9 +26,11 @@ export const runWebhookTool = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(validate)
   .handler(async ({ data }) => {
-    const url = WEBHOOKS[data.slug]!;
+    const { getWebhookUrl, getWebhookTimeoutMs } = await import("@/lib/webhooks.config.server");
+    const url = getWebhookUrl(data.slug);
+    if (!url) throw new Error("Unknown automation");
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 120_000);
+    const timer = setTimeout(() => controller.abort(), getWebhookTimeoutMs());
 
     try {
       let response: Response;
