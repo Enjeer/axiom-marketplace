@@ -1,11 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-/** Whitelisted n8n webhooks. Keyed by automation slug so clients cannot pick a URL. */
-const WEBHOOKS: Record<string, string> = {
-  "sales-lead-qualifier": "https://n8n.aorm.online/webhook/sales-lead-qualifier",
-  "pdf-extractor": "https://n8n.aorm.online/webhook-test/extract-pdf",
-};
+/**
+ * Whitelisted n8n webhooks. Keyed by automation slug so clients cannot pick a URL.
+ * URLs come from environment variables (read at call time, never at module scope).
+ */
+function getWebhooks(): Record<string, string> {
+  const base = (process.env['N8N_BASE_URL'] ?? 'https://n8n.aorm.online').replace(/\/+$/, '');
+  return {
+    'sales-lead-qualifier':
+      process.env['N8N_WEBHOOK_SALES_LEAD_QUALIFIER'] ?? `${base}/webhook/sales-lead-qualifier`,
+    'pdf-extractor':
+      process.env['N8N_WEBHOOK_PDF_EXTRACTOR'] ?? `${base}/webhook-test/extract-pdf`,
+  };
+}
+
+const WEBHOOK_SLUGS = ['sales-lead-qualifier', 'pdf-extractor'];
+
+const WEBHOOK_TIMEOUT_MS = Number(process.env['N8N_WEBHOOK_TIMEOUT_MS'] ?? 120_000);
 
 type WebhookInput = {
   slug: string;
