@@ -1,6 +1,7 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
+@source "../src";
 
 /*
  * Nexus AI design system — light, technical, premium SaaS.
