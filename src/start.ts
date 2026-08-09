@@ -19,14 +19,19 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
-// Start installs this automatically when src/start.ts is absent; defining the
-// file opts out, so re-add it explicitly to keep server functions protected
-// from cross-site requests.
-const csrfMiddleware = createCsrfMiddleware({
-  filter: (ctx) => ctx.handlerType === "serverFn",
-});
+// Start installs CSRF protection automatically when src/start.ts is absent;
+// defining this file opts out, so re-add it when the installed version exports
+// it. Older/mismatched builds (e.g. on Vercel) may not, so resolve it defensively.
+const maybeCreateCsrf = (Start as Record<string, unknown>)["createCsrfMiddleware"] as
+  | ((opts: { filter: (ctx: { handlerType: string }) => boolean }) => unknown)
+  | undefined;
+
+const csrfMiddleware =
+  typeof maybeCreateCsrf === "function"
+    ? maybeCreateCsrf({ filter: (ctx) => ctx.handlerType === "serverFn" })
+    : undefined;
 
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [errorMiddleware, csrfMiddleware],
+  requestMiddleware: [errorMiddleware, ...(csrfMiddleware ? [csrfMiddleware as never] : [])],
 }));
