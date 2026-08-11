@@ -15,6 +15,7 @@ import {
   Upload,
 } from "lucide-react";
 import { toast } from "sonner";
+import ReactMarkdown from "react-markdown";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
@@ -32,7 +33,7 @@ import {
 } from "@/components/ui/select";
 import { isWebhookTool, WebhookToolPanel } from "@/components/webhook-tool-panel";
 import { accentClass, formatCount, iconFor, type Automation } from "@/lib/catalog";
-import { cn } from "@/lib/utils";
+import { cn, extractResultText } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/automations/$slug")({
   head: () => ({
@@ -355,7 +356,7 @@ function AutomationDetail() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        navigator.clipboard.writeText(result);
+                        navigator.clipboard.writeText(extractResultText(result));
                         toast.success("Copied to clipboard");
                       }}
                     >
@@ -366,9 +367,61 @@ function AutomationDetail() {
                     </Button>
                   </div>
                 </div>
-                <pre className="mt-4 overflow-x-auto whitespace-pre-wrap rounded-xl border border-border bg-surface-muted p-5 font-mono text-xs leading-relaxed">
-                  {result}
-                </pre>
+                <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-surface-muted p-5 text-sm leading-relaxed">
+                  <ReactMarkdown
+                    components={{
+                      h1: ({ children }) => (
+                        <h1 className="mt-4 text-lg font-bold first:mt-0">{children}</h1>
+                      ),
+                      h2: ({ children }) => (
+                        <h2 className="mt-4 text-base font-bold first:mt-0">{children}</h2>
+                      ),
+                      h3: ({ children }) => (
+                        <h3 className="mt-4 text-sm font-bold first:mt-0">{children}</h3>
+                      ),
+                      p: ({ children }) => (
+                        <p className="mt-3 leading-relaxed first:mt-0">{children}</p>
+                      ),
+                      strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                      em: ({ children }) => <em className="italic">{children}</em>,
+                      ul: ({ children }) => (
+                        <ul className="mt-3 list-disc space-y-1 pl-5 first:mt-0">{children}</ul>
+                      ),
+                      ol: ({ children }) => (
+                        <ol className="mt-3 list-decimal space-y-1 pl-5 first:mt-0">{children}</ol>
+                      ),
+                      li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                      a: ({ children, href }) => (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary underline underline-offset-2"
+                        >
+                          {children}
+                        </a>
+                      ),
+                      hr: () => <hr className="my-4 border-border" />,
+                      code: ({ children }) => (
+                        <code className="rounded bg-surface px-1 py-0.5 font-mono text-xs">
+                          {children}
+                        </code>
+                      ),
+                      pre: ({ children }) => (
+                        <pre className="mt-3 overflow-x-auto rounded-lg border border-border bg-surface p-4 font-mono text-xs first:mt-0">
+                          {children}
+                        </pre>
+                      ),
+                      blockquote: ({ children }) => (
+                        <blockquote className="mt-3 border-l-2 border-border pl-4 text-muted-foreground first:mt-0">
+                          {children}
+                        </blockquote>
+                      ),
+                    }}
+                  >
+                    {extractResultText(result)}
+                  </ReactMarkdown>
+                </div>
               </section>
             )}
 
